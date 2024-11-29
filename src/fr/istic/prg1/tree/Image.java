@@ -5,7 +5,6 @@ import java.util.Scanner;
 import fr.istic.prg1.tree_util.AbstractImage;
 import fr.istic.prg1.tree_util.Iterator;
 import fr.istic.prg1.tree_util.Node;
-import fr.istic.prg1.tree_util.NodeType;
 
 /**
  * @author Zlanca-Nto ELisée MIHAN<zlanca-nto.mihan@etudiant.univ-rennes.fr>
@@ -44,15 +43,17 @@ public class Image extends AbstractImage {
 		Iterator<Node> it1 = this.iterator();
 		Iterator<Node> it2 = image2.iterator();
 		it1.clear();
-		this.affectAux(it1, it2);		
+		this.affectAux(it1, it2);
 	}
+
 	/**
 	 * Fait la récursivité
+	 * 
 	 * @param it1
 	 * @param it2
 	 */
 	private void affectAux(Iterator<Node> it1, Iterator<Node> it2) {
-		if(!it2.isEmpty()) {
+		if (!it2.isEmpty()) {
 			it1.addValue(it2.getValue());
 			it1.goLeft();
 			it2.goLeft();
@@ -75,7 +76,7 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public void rotate180(AbstractImage image2) {
-		
+
 	}
 
 	/**
@@ -87,11 +88,19 @@ public class Image extends AbstractImage {
 	public void videoInverse() {
 		assert !this.isEmpty() : "this ne doit pas être vide";
 		Iterator<Node> it = this.iterator();
-		Node node = it.getValue();
-		if (node.state == 0) {
-		}else if(it.getValue().state == 1) {	
-		}else {
-			
+		if (it.getValue().state == 0) {
+			it.setValue(Node.valueOf(1));
+		} else if (it.getValue().state == 1) {
+			it.setValue(Node.valueOf(0));
+		} else {
+			it.goLeft();
+			this.videoInverse();
+
+			it.goUp();
+			it.goRight();
+			this.videoInverse();
+
+			it.goUp();
 		}
 	}
 
@@ -216,25 +225,25 @@ public class Image extends AbstractImage {
 	@Override
 	public boolean isPixelOn(int x, int y) {
 		assert !this.isEmpty() : "This ne doit pas être vide";
-		
+
 		int yMax = 256;
 		int xMax = 256;
 		int count = 0;
 		Iterator<Node> it = this.iterator();
-		
-		while (it.getValue().state !=2) {
-			if (count%2 ==0) {
-				yMax = yMax/2;
+
+		while (it.getValue().state != 2) {
+			if (count % 2 == 0) {
+				yMax = yMax / 2;
 				if (y < yMax) {
 					it.goLeft();
-				}else {
+				} else {
 					it.goRight();
 				}
-			}else {
-				xMax = xMax/2;
+			} else {
+				xMax = xMax / 2;
 				if (x < xMax) {
 					it.goLeft();
-				}else {
+				} else {
 					it.goRight();
 				}
 			}
