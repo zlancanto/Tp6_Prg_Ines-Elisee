@@ -2,7 +2,7 @@ package fr.istic.prg1.tree;
 
 import java.util.Scanner;
 
-import fr.istic.prg1.tree_util.AbstractImage;
+//import fr.istic.prg1.tree_util.AbstractImage;
 import fr.istic.prg1.tree_util.Iterator;
 import fr.istic.prg1.tree_util.Node;
 
@@ -220,11 +220,76 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public void zoomOut(AbstractImage image2) {
-		System.out.println();
-		System.out.println("-------------------------------------------------");
-		System.out.println("Fonction a ecrire");
-		System.out.println("-------------------------------------------------");
-		System.out.println();
+		Iterator<Node> it = this.iterator();
+		Iterator<Node> it2 = image2.iterator();
+		int profondeur = 0;
+		it.clear();
+		it.addValue(Node.valueOf(2));
+		it.goRight();
+		it.addValue(Node.valueOf(0));
+		it.goUp();
+		it.goLeft();
+		it.addValue(Node.valueOf(2));
+		it.goRight();
+		it.addValue(Node.valueOf(0));
+		it.goUp();
+		it.goLeft();
+		if (it2.getValue().state == 0) {
+			it.goUp();
+			it.clear();
+			it.addValue(Node.valueOf(0));
+		} else if (it2.getValue().state == 1) {
+			it.addValue(Node.valueOf(1));
+		} else {
+			profondeur++;
+			zoomOutAux(it, it2, profondeur);
+		}
+		if (it.getValue().state == 0) {
+			it.goRoot();
+			it.clear();
+			it.addValue(Node.valueOf(0));
+		}
+
+	}
+
+	private void zoomOutAux(Iterator<Node> it, Iterator<Node> it2, int profondeur) {
+		if (profondeur < 15 && it2.getValue().state == 2) {
+			profondeur++;
+			it.addValue(it2.getValue());
+			it.goLeft();
+			it2.goLeft();
+			zoomOutAux(it, it2, profondeur);
+			int gauche = it.getValue().state;
+			it.goUp();
+			it2.goUp();
+			it.goRight();
+			it2.goRight();
+			zoomOutAux(it, it2, profondeur);
+			int droite = it.getValue().state;
+			it.goUp();
+			it2.goUp();
+			if (gauche == droite && (gauche == 1 || gauche == 0)) {
+				it.clear();
+				it.addValue(Node.valueOf(gauche));
+			}
+		} else if (it2.getValue().state == 2) {
+			it2.goLeft();
+			int gauche = it2.getValue().state;
+			it2.goUp();
+			it2.goRight();
+			int droite = it2.getValue().state;
+			it2.goUp();
+			it.clear();
+			if (gauche == 2 && droite == 2) {
+				it.addValue(Node.valueOf(1));
+			} else if (gauche == 1 || droite == 1) {
+				it.addValue(Node.valueOf(1));
+			} else {
+				it.addValue(Node.valueOf(0));
+			}
+		} else {
+			it.addValue(it2.getValue());
+		}
 	}
 
 	/**

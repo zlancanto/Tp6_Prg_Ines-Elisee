@@ -42,6 +42,7 @@ public class BinaryTree<T> {
     private Element root;
 
     public BinaryTree() {
+        root = new Element();
     }
 
     /**
@@ -49,14 +50,14 @@ public class BinaryTree<T> {
      *         l'itérateur est positionné sur la racine de l'arbre.
      */
     public TreeIterator iterator() {
-        return null;
+        return new TreeIterator();
     }
 
     /**
      * @return true si l'arbre this est vide, false sinon
      */
     public boolean isEmpty() {
-        return false;
+        return (root == null);
     }
 
     /**
@@ -120,8 +121,7 @@ public class BinaryTree<T> {
          */
         @Override
         public boolean isEmpty() {
-            currentNode
-            return false;
+            return currentNode.value == null && currentNode.isEmpty();
         }
 
         /**
@@ -129,7 +129,19 @@ public class BinaryTree<T> {
          */
         @Override
         public NodeType nodeType() {
-            return NodeType.SENTINEL;
+            if (currentNode.right == null || currentNode.left == null) {
+                return NodeType.SENTINEL;
+            }
+            if (currentNode.left.value == null && currentNode.right.value == null) {
+                return NodeType.LEAF;
+            }
+            if (currentNode.right.value == null) {
+                return NodeType.SIMPLE_LEFT;
+            }
+            if (currentNode.left.value == null) {
+                return NodeType.SIMPLE_RIGHT;
+            }
+            return NodeType.DOUBLE;
         }
 
         /**
@@ -139,12 +151,24 @@ public class BinaryTree<T> {
          */
         @Override
         public void remove() {
-            try {
-                assert nodeType() != NodeType.DOUBLE : "retirer : retrait d'un noeud double non permis";
-            } catch (AssertionError e) {
-                e.printStackTrace();
-                System.exit(0);
+            assert nodeType() != NodeType.DOUBLE : "retirer : retrait d'un noeud double non permis";
+            Element newCurrent = null;
+            switch (this.nodeType()) {
+                case LEAF:
+                    newCurrent = new Element();
+                    break;
+                case SIMPLE_LEFT:
+                    newCurrent = currentNode.left;
+                    break;
+                case SIMPLE_RIGHT:
+                    newCurrent = currentNode.right;
+                    break;
+                default:
+                    return;
             }
+            currentNode.value = newCurrent.value;
+            currentNode.left = newCurrent.left;
+            currentNode.right = newCurrent.right;
         }
 
         /**
@@ -153,6 +177,9 @@ public class BinaryTree<T> {
          */
         @Override
         public void clear() {
+            currentNode.value = null;
+            currentNode.left = null;
+            currentNode.right = null;
         }
 
         /**
@@ -160,7 +187,7 @@ public class BinaryTree<T> {
          */
         @Override
         public T getValue() {
-            return null;
+            return currentNode.value;
         }
 
         /**
@@ -174,12 +201,10 @@ public class BinaryTree<T> {
 
         @Override
         public void addValue(T v) {
-            try {
-                assert isEmpty() : "Ajouter : on n'est pas sur un butoir";
-            } catch (AssertionError e) {
-                e.printStackTrace();
-                System.exit(0);
-            }
+            assert isEmpty() : "Ajouter : on n'est pas sur un butoir";
+            currentNode.value = v;
+            currentNode.left = new Element();
+            currentNode.right = new Element();
         }
 
         /**
@@ -190,6 +215,7 @@ public class BinaryTree<T> {
          */
         @Override
         public void setValue(T v) {
+            currentNode.value = v;
         }
 
         private void ancestor(int i, int j) {
