@@ -88,17 +88,21 @@ public class Image extends AbstractImage {
 	public void videoInverse() {
 		assert !this.isEmpty() : "this ne doit pas être vide";
 		Iterator<Node> it = this.iterator();
+		this.videoInverseAux(it);
+	}
+
+	private void videoInverseAux(Iterator<Node> it) {
 		if (it.getValue().state == 0) {
 			it.setValue(Node.valueOf(1));
 		} else if (it.getValue().state == 1) {
 			it.setValue(Node.valueOf(0));
 		} else {
 			it.goLeft();
-			this.videoInverse();
+			this.videoInverseAux(it);
 
 			it.goUp();
 			it.goRight();
-			this.videoInverse();
+			this.videoInverseAux(it);
 
 			it.goUp();
 		}
@@ -176,11 +180,66 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public void intersection(AbstractImage image1, AbstractImage image2) {
-		System.out.println();
-		System.out.println("-------------------------------------------------");
-		System.out.println("Fonction a ecrire");
-		System.out.println("-------------------------------------------------");
-		System.out.println();
+		assert !image1.isEmpty() && !image2.isEmpty() : "image1 et image2 ne doivent pas toutes être nulles";
+
+		Iterator<Node> it = this.iterator();
+		it.clear();
+		if (image1.isEmpty() || image2.isEmpty()) {
+			return;
+		}
+
+		Iterator<Node> it1 = image1.iterator();
+		Iterator<Node> it2 = image2.iterator();
+		this.intersectionAux(it, it1, it2);
+	}
+
+	private void intersectionAux(Iterator<Node> it, Iterator<Node> it1, Iterator<Node> it2) {
+		Node node1 = it1.getValue();
+		Node node2 = it2.getValue();
+		if (node1.state == 2 && node2.state == 2) {
+			it.addValue(Node.valueOf(2));
+			it.goLeft();
+			it1.goLeft();
+			it2.goLeft();
+			intersectionAux(it, it1, it2);
+		} else if (node1.state == 0 || node2.state == 0) {
+			if (this.isEmpty()) {
+				it.addValue(Node.valueOf(0));
+				intersectionAux(it, it1, it2);
+			} else {
+				it.addValue(Node.valueOf(0));
+				this.parcoursInfixeIntersection(it, it1, it2);
+			}
+		} else if (node1.state == 1 && node2.state == 2) {
+			this.affectAux(it, it2);
+			this.parcoursInfixeIntersection(it, it1, it2);
+		} else if (node1.state == 2 && node2.state == 1) {
+			this.affectAux(it, it1);
+			this.parcoursInfixeIntersection(it, it1, it2);
+		} else if (node1.state == 1 && node2.state == 1) {
+			if (this.isEmpty()) {
+				it.addValue(Node.valueOf(1));
+				intersectionAux(it, it1, it2);
+			} else {
+				it.addValue(Node.valueOf(1));
+				this.parcoursInfixeIntersection(it, it1, it2);
+			}
+		} // Ce block traite le dernier cas possible
+	}
+
+	private void parcoursInfixeIntersection(Iterator<Node> it, Iterator<Node> it1, Iterator<Node> it2) {
+		it.goUp();
+		it1.goUp();
+		it2.goUp();
+
+		it.goRight();
+		it1.goRight();
+		it2.goRight();
+		this.intersectionAux(it, it1, it2);
+
+		it.goUp();
+		it1.goUp();
+		it2.goUp();
 	}
 
 	/**
@@ -208,11 +267,37 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public boolean testDiagonal() {
-		System.out.println();
-		System.out.println("-------------------------------------------------");
-		System.out.println("Fonction a ecrire");
-		System.out.println("-------------------------------------------------");
-		System.out.println();
+		Iterator<Node> it = this.iterator();
+		return testDiagonalAux(it);
+	}
+
+	private boolean testDiagonalAux(Iterator<Node> it) {
+		if (it.getValue().state != 2) {
+			return it.getValue().state == 1;
+		}
+		boolean allumeG = false;
+		it.goLeft();
+		if (it.getValue().state == 2) {
+			it.goLeft();
+			allumeG = testDiagonalAux(it);
+			it.goUp();
+		} else {
+			allumeG = it.getValue().state == 1;
+		}
+		it.goUp();
+		if (allumeG) {
+			boolean allumeD = false;
+			it.goRight();
+			if (it.getValue().state == 2) {
+				it.goRight();
+				allumeD = testDiagonalAux(it);
+				it.goUp();
+			} else {
+				allumeD = it.getValue().state == 1;
+			}
+			it.goUp();
+			return allumeD;
+		}
 		return false;
 	}
 
@@ -231,7 +316,7 @@ public class Image extends AbstractImage {
 		int count = 0;
 		Iterator<Node> it = this.iterator();
 
-		while (it.getValue().state != 2) {
+		while (it.getValue().state == 2) {
 			if (count % 2 == 0) {
 				yMax = yMax / 2;
 				if (y < yMax) {
@@ -263,12 +348,36 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public boolean sameLeaf(int x1, int y1, int x2, int y2) {
-		System.out.println();
-		System.out.println("-------------------------------------------------");
-		System.out.println("Fonction a ecrire");
-		System.out.println("-------------------------------------------------");
-		System.out.println();
-		return false;
+		assert !this.isEmpty() : "This ne doit pas être vide";
+
+		int yMax = 256;
+		int xMax = 256;
+		int count = 0;
+		Iterator<Node> it = this.iterator();
+
+		while (it.getValue().state == 2) {
+			if (count % 2 == 0) {
+				yMax = yMax / 2;
+				if (y1 < yMax && y2 < yMax) {
+					it.goLeft();
+				} else if (y1 >= yMax && y2 >= yMax) {
+					it.goRight();
+				} else {
+					return false;
+				}
+			} else {
+				xMax = xMax / 2;
+				if (x1 < xMax && x2 < xMax) {
+					it.goLeft();
+				} else if (x1 >= xMax && x2 >= xMax) {
+					it.goRight();
+				} else {
+					return false;
+				}
+			}
+			count++;
+		}
+		return true;
 	}
 
 	/**
