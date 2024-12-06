@@ -76,7 +76,26 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public void rotate180(AbstractImage image2) {
+		Iterator<Node> it1 = this.iterator();
+		Iterator<Node> it2 = image2.iterator();
+		it1.clear();
+		rotate180Aux(it1, it2);
+	}
 
+	private void rotate180Aux(Iterator<Node> it1, Iterator<Node> it2) {
+		if (!it2.isEmpty()) {
+			it1.addValue(it2.getValue());
+			it1.goLeft();
+			it2.goRight();
+			rotate180Aux(it1, it2);
+			it1.goUp();
+			it2.goUp();
+			it1.goRight();
+			it2.goLeft();
+			rotate180Aux(it1, it2);
+			it1.goUp();
+			it2.goUp();
+		}
 	}
 
 	/**
@@ -116,11 +135,43 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public void mirrorV(AbstractImage image2) {
-		System.out.println();
-		System.out.println("-------------------------------------------------");
-		System.out.println("Fonction a ecrire");
-		System.out.println("-------------------------------------------------");
-		System.out.println();
+		assert !image2.isEmpty() : "image2 ne doit pas être vide";
+		Iterator<Node> it1 = this.iterator();
+		Iterator<Node> it2 = image2.iterator();
+		it1.clear();
+		mirrorAux(it1, it2, -1);
+	}
+
+	private void mirrorAux(Iterator<Node> it1, Iterator<Node> it2, int count) {
+		if (it2.getValue().state == 2) {
+			count++;
+			it1.addValue(it2.getValue());
+			if (count % 2 == 0) {
+				it1.goLeft();
+				it2.goRight();
+				mirrorAux(it1, it2, count);
+				it1.goUp();
+				it2.goUp();
+				it1.goRight();
+				it2.goLeft();
+				mirrorAux(it1, it2, count);
+				it1.goUp();
+				it2.goUp();
+			} else {
+				it1.goLeft();
+				it2.goLeft();
+				mirrorAux(it1, it2, count);
+				it1.goUp();
+				it2.goUp();
+				it1.goRight();
+				it2.goRight();
+				mirrorAux(it1, it2, count);
+				it1.goUp();
+				it2.goUp();
+			}
+		} else {
+			it1.addValue(it2.getValue());
+		}
 	}
 
 	/**
@@ -131,11 +182,11 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public void mirrorH(AbstractImage image2) {
-		System.out.println();
-		System.out.println("-------------------------------------------------");
-		System.out.println("Fonction a ecrire");
-		System.out.println("-------------------------------------------------");
-		System.out.println();
+		assert !image2.isEmpty() : "image2 ne doit pas être vide";
+		Iterator<Node> it1 = this.iterator();
+		Iterator<Node> it2 = image2.iterator();
+		it1.clear();
+		mirrorAux(it1, it2, 0);
 	}
 
 	/**
@@ -186,66 +237,46 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public void intersection(AbstractImage image1, AbstractImage image2) {
-		assert !image1.isEmpty() && !image2.isEmpty() : "image1 et image2 ne doivent pas toutes être nulles";
-
+		assert !image1.isEmpty() && !image2.isEmpty() : "image1 et image2 ne doivent pas toutes être vident";
 		Iterator<Node> it = this.iterator();
-		it.clear();
-		if (image1.isEmpty() || image2.isEmpty()) {
-			return;
-		}
-
 		Iterator<Node> it1 = image1.iterator();
 		Iterator<Node> it2 = image2.iterator();
-		this.intersectionAux(it, it1, it2);
+		it.clear();
+		intersectionAux(it, it1, it2);
 	}
 
 	private void intersectionAux(Iterator<Node> it, Iterator<Node> it1, Iterator<Node> it2) {
-		Node node1 = it1.getValue();
-		Node node2 = it2.getValue();
-		if (node1.state == 2 && node2.state == 2) {
-			it.addValue(Node.valueOf(2));
+		if (it1.getValue().state == 0 || it2.getValue().state == 0) {
+			it.addValue(Node.valueOf(0));
+		} else if (it1.getValue().state == 1 && it2.getValue().state == 1) {
+			it.addValue(it1.getValue());
+		} else if (it1.getValue().state == 2 && it2.getValue().state == 1) {
+			affectAux(it, it1);
+		} else if (it1.getValue().state == 1 && it2.getValue().state == 2) {
+			affectAux(it, it2);
+		} else if (it1.getValue().state == 2 && it2.getValue().state == 2) {
+
+			it.addValue(it1.getValue());
 			it.goLeft();
 			it1.goLeft();
 			it2.goLeft();
 			intersectionAux(it, it1, it2);
-		} else if (node1.state == 0 || node2.state == 0) {
-			if (this.isEmpty()) {
-				it.addValue(Node.valueOf(0));
-				intersectionAux(it, it1, it2);
-			} else {
-				it.addValue(Node.valueOf(0));
-				this.parcoursInfixeIntersection(it, it1, it2);
-			}
-		} else if (node1.state == 1 && node2.state == 2) {
-			this.affectAux(it, it2);
-			this.parcoursInfixeIntersection(it, it1, it2);
-		} else if (node1.state == 2 && node2.state == 1) {
-			this.affectAux(it, it1);
-			this.parcoursInfixeIntersection(it, it1, it2);
-		} else if (node1.state == 1 && node2.state == 1) {
-			if (this.isEmpty()) {
-				it.addValue(Node.valueOf(1));
-				intersectionAux(it, it1, it2);
-			} else {
-				it.addValue(Node.valueOf(1));
-				this.parcoursInfixeIntersection(it, it1, it2);
-			}
-		} // Ce block traite le dernier cas possible
-	}
 
-	private void parcoursInfixeIntersection(Iterator<Node> it, Iterator<Node> it1, Iterator<Node> it2) {
-		it.goUp();
-		it1.goUp();
-		it2.goUp();
+			it.goUp();
+			it1.goUp();
+			it2.goUp();
 
-		it.goRight();
-		it1.goRight();
-		it2.goRight();
-		this.intersectionAux(it, it1, it2);
+			it.goRight();
+			it1.goRight();
+			it2.goRight();
+			intersectionAux(it, it1, it2);
 
-		it.goUp();
-		it1.goUp();
-		it2.goUp();
+			it.goUp();
+			it1.goUp();
+			it2.goUp();
+		} else {
+			System.out.println("Oui correct !");
+		}
 	}
 
 	/**
@@ -258,11 +289,46 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public void union(AbstractImage image1, AbstractImage image2) {
-		System.out.println();
-		System.out.println("-------------------------------------------------");
-		System.out.println("Fonction a ecrire");
-		System.out.println("-------------------------------------------------");
-		System.out.println();
+		assert !image1.isEmpty() && !image2.isEmpty() : "image1 et image2 ne doivent pas toutes être vides";
+		Iterator<Node> it = this.iterator();
+		Iterator<Node> it1 = image1.iterator();
+		Iterator<Node> it2 = image2.iterator();
+
+		it.clear();
+		this.unionAux(it, it1, it2);
+	}
+
+	private void unionAux(Iterator<Node> it, Iterator<Node> it1, Iterator<Node> it2) {
+		if (!it1.isEmpty() && !it2.isEmpty()) {
+			if (it1.getValue().state == 1 || it2.getValue().state == 1) {
+				it.addValue(Node.valueOf(1));
+			} else if (it1.getValue().state == 0 && it2.getValue().state == 0) {
+				it.addValue(it1.getValue());
+			} else if (it1.getValue().state == 0 && it2.getValue().state == 2) {
+				this.affectAux(it, it2);
+			} else if (it1.getValue().state == 2 && it2.getValue().state == 0) {
+				this.affectAux(it, it1);
+			} else {
+				it.addValue(it1.getValue());
+				it.goLeft();
+				it1.goLeft();
+				it2.goLeft();
+				this.unionAux(it, it1, it2);
+
+				it.goUp();
+				it1.goUp();
+				it2.goUp();
+
+				it.goRight();
+				it1.goRight();
+				it2.goRight();
+				this.unionAux(it, it1, it2);
+
+				it.goUp();
+				it1.goUp();
+				it2.goUp();
+			}
+		}
 	}
 
 	/**
@@ -315,7 +381,7 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public boolean isPixelOn(int x, int y) {
-		assert !this.isEmpty() : "This ne doit pas être vide";
+		// assert !this.isEmpty() : "This ne doit pas être vide";
 
 		int yMax = 256;
 		int xMax = 256;
