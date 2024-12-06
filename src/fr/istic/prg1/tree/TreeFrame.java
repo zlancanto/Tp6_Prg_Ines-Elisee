@@ -19,7 +19,9 @@ import java.awt.event.WindowEvent;
  * Classe pour l'affichage des images de la classe Image sous forme d'arbres
  * binaires.
  * 
- * @author MickaÃ«l Foursov <foursov@univ-rennes1.fr>
+ * @author Zlanca-Nto MIHAN<zlanca-nto.mihan@etudiant.univ-rennes.fr>
+ * @author Ines Gaetan NOUBI-SI KUISSEU
+ *         <ines-gaetan.noubi@etudiant.univ-rennes.fr>
  * @version 5.0
  * @since 2022-09-23
  */

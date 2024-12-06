@@ -2,7 +2,7 @@ package fr.istic.prg1.tree;
 
 import java.util.Scanner;
 
-//import fr.istic.prg1.tree_util.AbstractImage;
+import fr.istic.prg1.tree_util.AbstractImage;
 import fr.istic.prg1.tree_util.Iterator;
 import fr.istic.prg1.tree_util.Node;
 
@@ -307,40 +307,40 @@ public class Image extends AbstractImage {
 		Iterator<Node> it1 = image1.iterator();
 		Iterator<Node> it2 = image2.iterator();
 		it.clear();
-		intersectionAux(it, it1, it2);
+		intersectionUnionAux(it, it1, it2, 0);
 	}
 
-	private void intersectionAux(Iterator<Node> it, Iterator<Node> it1, Iterator<Node> it2) {
-		if (it1.getValue().state == 0 || it2.getValue().state == 0) {
-			it.addValue(Node.valueOf(0));
-		} else if (it1.getValue().state == 1 && it2.getValue().state == 1) {
-			it.addValue(it1.getValue());
-		} else if (it1.getValue().state == 2 && it2.getValue().state == 1) {
-			affectAux(it, it1);
-		} else if (it1.getValue().state == 1 && it2.getValue().state == 2) {
-			affectAux(it, it2);
+	private void intersectionUnionAux(Iterator<Node> it, Iterator<Node> it1, Iterator<Node> it2, int toCompare) {
+		if (it1.getValue().state == toCompare || it2.getValue().state == toCompare) {
+			it.addValue(Node.valueOf(toCompare));
 		} else if (it1.getValue().state == 2 && it2.getValue().state == 2) {
-
 			it.addValue(it1.getValue());
 			it.goLeft();
 			it1.goLeft();
 			it2.goLeft();
-			intersectionAux(it, it1, it2);
-
+			intersectionUnionAux(it, it1, it2, toCompare);
+			int gauche = it.getValue().state;
 			it.goUp();
 			it1.goUp();
 			it2.goUp();
-
 			it.goRight();
 			it1.goRight();
 			it2.goRight();
-			intersectionAux(it, it1, it2);
-
+			intersectionUnionAux(it, it1, it2, toCompare);
+			int droite = it.getValue().state;
 			it.goUp();
 			it1.goUp();
 			it2.goUp();
+			if (gauche == droite && gauche == toCompare) {
+				it.clear();
+				it.addValue(Node.valueOf(toCompare));
+			}
+		} else if (it1.getValue().state == it2.getValue().state) {
+			it.addValue(it1.getValue());
+		} else if (it1.getValue().state == 2) {
+			affectAux(it, it1);
 		} else {
-			System.out.println("Oui correct !");
+			affectAux(it, it2);
 		}
 	}
 
@@ -360,40 +360,7 @@ public class Image extends AbstractImage {
 		Iterator<Node> it2 = image2.iterator();
 
 		it.clear();
-		this.unionAux(it, it1, it2);
-	}
-
-	private void unionAux(Iterator<Node> it, Iterator<Node> it1, Iterator<Node> it2) {
-		if (!it1.isEmpty() && !it2.isEmpty()) {
-			if (it1.getValue().state == 1 || it2.getValue().state == 1) {
-				it.addValue(Node.valueOf(1));
-			} else if (it1.getValue().state == 0 && it2.getValue().state == 0) {
-				it.addValue(it1.getValue());
-			} else if (it1.getValue().state == 0 && it2.getValue().state == 2) {
-				this.affectAux(it, it2);
-			} else if (it1.getValue().state == 2 && it2.getValue().state == 0) {
-				this.affectAux(it, it1);
-			} else {
-				it.addValue(it1.getValue());
-				it.goLeft();
-				it1.goLeft();
-				it2.goLeft();
-				this.unionAux(it, it1, it2);
-
-				it.goUp();
-				it1.goUp();
-				it2.goUp();
-
-				it.goRight();
-				it1.goRight();
-				it2.goRight();
-				this.unionAux(it, it1, it2);
-
-				it.goUp();
-				it1.goUp();
-				it2.goUp();
-			}
-		}
+		intersectionUnionAux(it, it1, it2, 1);
 	}
 
 	/**
@@ -446,32 +413,35 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public boolean isPixelOn(int x, int y) {
-		// assert !this.isEmpty() : "This ne doit pas être vide";
-
-		int yMax = 256;
-		int xMax = 256;
-		int count = 0;
+		assert !this.isEmpty() : "This ne doit pas être vide";
 		Iterator<Node> it = this.iterator();
-
+		boolean hauteur = true;
+		int maxY = 255;
+		int maxX = 255;
+		int xCompare = 127;
+		int yCompare = 127;
 		while (it.getValue().state == 2) {
-			if (count % 2 == 0) {
-				yMax = yMax / 2;
-				if (y < yMax) {
+			if (hauteur) {
+				if (y < maxY - yCompare) {
+					maxY = maxY - yCompare - 1;
 					it.goLeft();
 				} else {
 					it.goRight();
 				}
+				yCompare = yCompare / 2;
+				hauteur = false;
 			} else {
-				xMax = xMax / 2;
-				if (x < xMax) {
+				if (x < maxX - xCompare) {
+					maxX = maxX - xCompare - 1;
 					it.goLeft();
 				} else {
 					it.goRight();
 				}
+				xCompare = xCompare / 2;
+				hauteur = true;
 			}
-			count++;
 		}
-		return (it.getValue().state == 1);
+		return it.getValue().state == 1;
 	}
 
 	/**
@@ -487,34 +457,43 @@ public class Image extends AbstractImage {
 	public boolean sameLeaf(int x1, int y1, int x2, int y2) {
 		assert !this.isEmpty() : "This ne doit pas être vide";
 
-		int yMax = 256;
-		int xMax = 256;
-		int count = 0;
 		Iterator<Node> it = this.iterator();
-
-		while (it.getValue().state == 2) {
-			if (count % 2 == 0) {
-				yMax = yMax / 2;
-				if (y1 < yMax && y2 < yMax) {
+		Iterator<Node> it2 = this.iterator();
+		boolean hauteur = true;
+		int maxY = 255;
+		int maxX = 255;
+		int xCompare = 127;
+		int yCompare = 127;
+		while (it.getValue().state == 2 && it2.getValue().state == 2) {
+			if (hauteur) {
+				if (y1 < maxY - yCompare && y2 < maxY - yCompare) {
+					maxY = maxY - yCompare - 1;
 					it.goLeft();
-				} else if (y1 >= yMax && y2 >= yMax) {
+					it2.goLeft();
+				} else if (y1 >= maxY - yCompare && y2 >= maxY - yCompare) {
 					it.goRight();
+					it2.goRight();
 				} else {
 					return false;
 				}
+				yCompare = yCompare / 2;
+				hauteur = false;
 			} else {
-				xMax = xMax / 2;
-				if (x1 < xMax && x2 < xMax) {
+				if (x1 < maxX - xCompare && x2 < maxX - xCompare) {
+					maxX = maxX - xCompare - 1;
 					it.goLeft();
-				} else if (x1 >= xMax && x2 >= xMax) {
+					it2.goLeft();
+				} else if (x1 >= maxX - xCompare && x2 >= maxX - xCompare) {
 					it.goRight();
+					it2.goRight();
 				} else {
 					return false;
 				}
+				xCompare = xCompare / 2;
+				hauteur = true;
 			}
-			count++;
 		}
-		return true;
+		return it.getValue().state == it2.getValue().state;
 	}
 
 	/**

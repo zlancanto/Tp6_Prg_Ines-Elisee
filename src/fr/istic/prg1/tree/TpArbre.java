@@ -15,7 +15,9 @@ import javax.swing.JMenuItem;
 import fr.istic.prg1.tree_util.ImageWindow;
 
 /**
- * @author Mickaël Foursov <foursov@univ-rennes1.fr>
+ * @author Zlanca-Nto MIHAN<zlanca-nto.mihan@etudiant.univ-rennes.fr>
+ * @author Ines Gaetan NOUBI-SI KUISSEU
+ *         <ines-gaetan.noubi@etudiant.univ-rennes.fr>
  * @version 4.0
  * @since 2015-06-15
  * 
@@ -105,91 +107,94 @@ public class TpArbre {
 			acquisition(choiceNumber);
 			if ((firstTreeNumber != -1) && (secondTreeNumber != -1) && (thirdTreeNumber != -1)) {
 				switch (choiceNumber) {
-				case 0:
-					imageSet.get(firstTreeNumber).constructTreeFromFile();
-					break;
-				case 1:
-					imageSet.get(firstTreeNumber).saveImage();
-					break;
-				case 2:
-					System.out.println("hauteur = " + imageSet.get(firstTreeNumber).height() + " et nombre de noeuds = "
-							+ imageSet.get(firstTreeNumber).numberOfNodes());
-					break;
-				case 3:
-					int x = readCoords("x");
-					int y = readCoords("y");
-					if (imageSet.get(firstTreeNumber).isPixelOn(x, y)) {
-						System.out.println("point (" + x + ", " + y + ") allumé");
-					} else {
-						System.out.println("point (" + x + ", " + y + ") éteint");
-					}
-					break;
-				case 4:
-					imageSet.get(firstTreeNumber).affect(imageSet.get(secondTreeNumber));
-					break;
-				case 5:
-					imageSet.get(firstTreeNumber).videoInverse();
-					break;
-				case 6:
-					imageSet.get(firstTreeNumber).rotate180(imageSet.get(secondTreeNumber));
-					break;
-				case 7:
-					System.out.println("Rotation 90 n'est pas implémentée");
-					break;
-				case 8:
-					imageSet.get(firstTreeNumber).mirrorV(imageSet.get(secondTreeNumber));
-					break;
-				case 9:
-					imageSet.get(firstTreeNumber).mirrorH(imageSet.get(secondTreeNumber));
-					break;
-				case 10:
-					imageSet.get(firstTreeNumber).zoomIn(imageSet.get(secondTreeNumber));
-					break;
-				case 11:
-					imageSet.get(firstTreeNumber).zoomOut(imageSet.get(secondTreeNumber));
-					break;
-				case 12:
-					imageSet.get(firstTreeNumber).intersection(imageSet.get(secondTreeNumber),
-							imageSet.get(thirdTreeNumber));
-					break;
-				case 13:
-					imageSet.get(firstTreeNumber).union(imageSet.get(secondTreeNumber), imageSet.get(thirdTreeNumber));
-					break;
-				case 14:
-					if (imageSet.get(firstTreeNumber).testDiagonal()) {
-						System.out.println("diagonale entierement allumee");
-					} else {
-						System.out.println("diagonale non entierement allumee");
-					}
-					break;
-				case 15:
-					int x1 = readCoords("x1");
-					int y1 = readCoords("y1");
-					int x2 = readCoords("x2");
-					int y2 = readCoords("y2");
-					if (imageSet.get(firstTreeNumber).sameLeaf(x1, y1, x2, y2)) {
-						System.out.println("points dans la même feuille");
-					} else {
-						System.out.println("points dans feuilles différentes");
-					}
-					break;
-				case 16:
-					if (imageSet.get(firstTreeNumber).isIncludedIn(imageSet.get(secondTreeNumber)))
-						System.out.println("E[" + firstTreeNumber + "] inclus dans E[" + secondTreeNumber + "]");
-					else
-						System.out.println("E[" + firstTreeNumber + "] non inclus dans E[" + secondTreeNumber + "]");
-					break;
-				case 17:
-					imageSet.get(firstTreeNumber).plotTree();
-					break;
-				case 18:
-				default:
-					for (int i = NUMBER_OF_TREES; i > 0; --i) {
-						imageSet.remove(i - 1);
-					}
-					standardInput.close();
-					Image.closeAll();
-					System.exit(0);
+					case 0:
+						imageSet.get(firstTreeNumber).constructTreeFromFile();
+						break;
+					case 1:
+						imageSet.get(firstTreeNumber).saveImage();
+						break;
+					case 2:
+						System.out.println(
+								"hauteur = " + imageSet.get(firstTreeNumber).height() + " et nombre de noeuds = "
+										+ imageSet.get(firstTreeNumber).numberOfNodes());
+						break;
+					case 3:
+						int x = readCoords("x");
+						int y = readCoords("y");
+						if (imageSet.get(firstTreeNumber).isPixelOn(x, y)) {
+							System.out.println("point (" + x + ", " + y + ") allumé");
+						} else {
+							System.out.println("point (" + x + ", " + y + ") éteint");
+						}
+						break;
+					case 4:
+						imageSet.get(firstTreeNumber).affect(imageSet.get(secondTreeNumber));
+						break;
+					case 5:
+						imageSet.get(firstTreeNumber).videoInverse();
+						break;
+					case 6:
+						imageSet.get(firstTreeNumber).rotate180(imageSet.get(secondTreeNumber));
+						break;
+					case 7:
+						System.out.println("Rotation 90 n'est pas implémentée");
+						break;
+					case 8:
+						imageSet.get(firstTreeNumber).mirrorV(imageSet.get(secondTreeNumber));
+						break;
+					case 9:
+						imageSet.get(firstTreeNumber).mirrorH(imageSet.get(secondTreeNumber));
+						break;
+					case 10:
+						imageSet.get(firstTreeNumber).zoomIn(imageSet.get(secondTreeNumber));
+						break;
+					case 11:
+						imageSet.get(firstTreeNumber).zoomOut(imageSet.get(secondTreeNumber));
+						break;
+					case 12:
+						imageSet.get(firstTreeNumber).intersection(imageSet.get(secondTreeNumber),
+								imageSet.get(thirdTreeNumber));
+						break;
+					case 13:
+						imageSet.get(firstTreeNumber).union(imageSet.get(secondTreeNumber),
+								imageSet.get(thirdTreeNumber));
+						break;
+					case 14:
+						if (imageSet.get(firstTreeNumber).testDiagonal()) {
+							System.out.println("diagonale entierement allumee");
+						} else {
+							System.out.println("diagonale non entierement allumee");
+						}
+						break;
+					case 15:
+						int x1 = readCoords("x1");
+						int y1 = readCoords("y1");
+						int x2 = readCoords("x2");
+						int y2 = readCoords("y2");
+						if (imageSet.get(firstTreeNumber).sameLeaf(x1, y1, x2, y2)) {
+							System.out.println("points dans la même feuille");
+						} else {
+							System.out.println("points dans feuilles différentes");
+						}
+						break;
+					case 16:
+						if (imageSet.get(firstTreeNumber).isIncludedIn(imageSet.get(secondTreeNumber)))
+							System.out.println("E[" + firstTreeNumber + "] inclus dans E[" + secondTreeNumber + "]");
+						else
+							System.out
+									.println("E[" + firstTreeNumber + "] non inclus dans E[" + secondTreeNumber + "]");
+						break;
+					case 17:
+						imageSet.get(firstTreeNumber).plotTree();
+						break;
+					case 18:
+					default:
+						for (int i = NUMBER_OF_TREES; i > 0; --i) {
+							imageSet.remove(i - 1);
+						}
+						standardInput.close();
+						Image.closeAll();
+						System.exit(0);
 				}
 			}
 			plotAllTrees();
@@ -214,100 +219,100 @@ public class TpArbre {
 			int j = 0;
 			int k = 0; // valeurs par default
 			switch (choiceNumber) {
-			case 0:
-				i = readFirstNumber();
-				break; // Construire : -1<= i<MAXARB
-			case 1:
-			case 2:
-			case 3:
-			case 5:
-			case 14:
-			case 15:
-			case 17:
-				/*
-				 * Sauver, Dessiner, Hauteur, PointAllume, InverseVideo, TesterDiagonale,
-				 * MemeFeuille, AfficherArbre : i<>-1 == > E.get(i) non vide
-				 */
-				do {
-					i = readFirstNumberNotEmpty();
+				case 0:
+					i = readFirstNumber();
+					break; // Construire : -1<= i<MAXARB
+				case 1:
+				case 2:
+				case 3:
+				case 5:
+				case 14:
+				case 15:
+				case 17:
+					/*
+					 * Sauver, Dessiner, Hauteur, PointAllume, InverseVideo, TesterDiagonale,
+					 * MemeFeuille, AfficherArbre : i<>-1 == > E.get(i) non vide
+					 */
+					do {
+						i = readFirstNumberNotEmpty();
+						if (i != -1) {
+							imageSet.get(i);
+						}
+					} while ((i != -1) && imageSet.get(i).isEmpty());
+					break;
+				case 4:
+				case 6:
+				case 7:
+				case 8:
+				case 9:
+				case 10:
+				case 11:
+					// Affecter, Rotation180, Rotation90, mirrorV, mirrorH, zoomIn,
+					// zoomOut : i<>-1, j<>-1 = > j<>i et E.get(j) non
+					// vide
+					i = readFirstNumber();
 					if (i != -1) {
-						imageSet.get(i);
-					}
-				} while ((i != -1) && imageSet.get(i).isEmpty());
-				break;
-			case 4:
-			case 6:
-			case 7:
-			case 8:
-			case 9:
-			case 10:
-			case 11:
-				// Affecter, Rotation180, Rotation90, mirrorV, mirrorH, zoomIn,
-				// zoomOut : i<>-1, j<>-1 = > j<>i et E.get(j) non
-				// vide
-				i = readFirstNumber();
-				if (i != -1) {
-					do {
-						j = readSecondNumber(i);
-						if (j != -1) {
-							imageSet.get(j);
-						}
-					} while ((j != -1) && imageSet.get(j).isEmpty());
-				}
-				break;
-			case 16:
-				/*
-				 * Inclus : i<>-1 et j<>-1 == > E.get(i) non vide, j<>i et E.get(j) non vide
-				 */
-				do {
-					i = readFirstNumberNotEmpty();
-					if (i != -1) {
-						imageSet.get(i);
-					}
-				} while ((i != -1) && imageSet.get(i).isEmpty());
-				if (i != -1) {
-					do {
-						j = readSecondNumber(i);
-						if (j != -1) {
-							imageSet.get(j);
-						}
-					} while ((j != -1) && imageSet.get(j).isEmpty());
-				}
-				break;
-			case 12:
-			case 13:
-				/*
-				 * Inter, Union : i<>-1, j<>-1, k<>-1 == > j<>i, k<>i, E.get(j) et E.get(k) non
-				 * vides
-				 */
-				i = readFirstNumber();
-				if (i != -1) {
-					do {
-						j = readSecondNumber(i);
-						if (j != -1) {
-							imageSet.get(j);
-						}
-					} while ((j != -1) && imageSet.get(j).isEmpty());
-					if (j != -1) {
 						do {
-							k = readThirdNumber(i, j);
-							if (k != -1) {
-								imageSet.get(k);
+							j = readSecondNumber(i);
+							if (j != -1) {
+								imageSet.get(j);
 							}
-						} while ((k != -1) && imageSet.get(k).isEmpty());
+						} while ((j != -1) && imageSet.get(j).isEmpty());
 					}
-				}
-				break;
-			case 18:
-				break; // Quitter
-			default:
-				System.out.println("acquisition : choix non prevu");
+					break;
+				case 16:
+					/*
+					 * Inclus : i<>-1 et j<>-1 == > E.get(i) non vide, j<>i et E.get(j) non vide
+					 */
+					do {
+						i = readFirstNumberNotEmpty();
+						if (i != -1) {
+							imageSet.get(i);
+						}
+					} while ((i != -1) && imageSet.get(i).isEmpty());
+					if (i != -1) {
+						do {
+							j = readSecondNumber(i);
+							if (j != -1) {
+								imageSet.get(j);
+							}
+						} while ((j != -1) && imageSet.get(j).isEmpty());
+					}
+					break;
+				case 12:
+				case 13:
+					/*
+					 * Inter, Union : i<>-1, j<>-1, k<>-1 == > j<>i, k<>i, E.get(j) et E.get(k) non
+					 * vides
+					 */
+					i = readFirstNumber();
+					if (i != -1) {
+						do {
+							j = readSecondNumber(i);
+							if (j != -1) {
+								imageSet.get(j);
+							}
+						} while ((j != -1) && imageSet.get(j).isEmpty());
+						if (j != -1) {
+							do {
+								k = readThirdNumber(i, j);
+								if (k != -1) {
+									imageSet.get(k);
+								}
+							} while ((k != -1) && imageSet.get(k).isEmpty());
+						}
+					}
+					break;
+				case 18:
+					break; // Quitter
+				default:
+					System.out.println("acquisition : choix non prevu");
 			}
 			firstTreeNumber = i;
 			secondTreeNumber = j;
 			thirdTreeNumber = k;
 		}
-		
+
 		/**
 		 * 
 		 * @param xOrY nom de la coordonnée
