@@ -147,11 +147,17 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public void zoomIn(AbstractImage image2) {
-		System.out.println();
-		System.out.println("-------------------------------------------------");
-		System.out.println("Fonction a ecrire");
-		System.out.println("-------------------------------------------------");
-		System.out.println();
+		assert !image2.isEmpty() : "image2 ne doit pas être vide";
+		Iterator<Node> it = this.iterator();
+		Iterator<Node> it2 = image2.iterator();
+		it.clear();
+		it2.goLeft();
+		if (it2.getValue().state != 2) {
+			it.addValue(it2.getValue());
+		} else {
+			it2.goLeft();
+			affectAux(it, it2);
+		}
 	}
 
 	/**
@@ -388,11 +394,35 @@ public class Image extends AbstractImage {
 	 */
 	@Override
 	public boolean isIncludedIn(AbstractImage image2) {
-		System.out.println();
-		System.out.println("-------------------------------------------------");
-		System.out.println("Fonction a ecrire");
-		System.out.println("-------------------------------------------------");
-		System.out.println();
-		return false;
+		assert !this.isEmpty() && !image2.isEmpty() : "Ni this, ni image2 ne doivent être vident";
+		Iterator<Node> it = this.iterator();
+		Iterator<Node> it2 = image2.iterator();
+		return isIncludedInAux(it, it2);
+	}
+
+	private boolean isIncludedInAux(Iterator<Node> it, Iterator<Node> it2) {
+		if (it.getValue().state == 2 && it2.getValue().state == 2) {
+			it.goLeft();
+			it2.goLeft();
+			boolean includeG = isIncludedInAux(it, it2);
+			it.goUp();
+			it2.goUp();
+			if (includeG) {
+				it.goRight();
+				it2.goRight();
+				boolean includeD = isIncludedInAux(it, it2);
+				it.goUp();
+				it2.goUp();
+				return includeD;
+			}
+			return false;
+		} else if (it.getValue().state == it2.getValue().state) {
+			return true;
+		} else if (it.getValue().state == 0) {
+			return true;
+		} else if (it2.getValue().state == 0) {
+			return false;
+		}
+		return true;
 	}
 }
